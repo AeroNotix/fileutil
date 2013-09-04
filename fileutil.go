@@ -8,6 +8,14 @@ import (
 	"path/filepath"
 )
 
+func RecursiveDirectoryList(basedir string) ([]string, error) {
+	dirs := []string{}
+	return dirs, filepath.Walk(basedir, func(path string, info os.FileInfo, err error) error {
+		dirs = append(dirs, path)
+		return nil
+	})
+}
+
 // CopyDirectory copies all files and folders underneath src/ and
 // copies them under the dst/ directory, recursively.
 //
