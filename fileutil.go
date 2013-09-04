@@ -38,7 +38,8 @@ func CopyDirectory(dst, src string) error {
 		} else {
 			err = CopyFile(destination_file, source_file)
 			if err != nil {
-				return err
+				log.Println(err)
+				continue
 			}
 		}
 	}
