@@ -6,12 +6,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func RecursiveDirectoryList(basedir string) ([]string, error) {
 	dirs := []string{}
 	return dirs, filepath.Walk(basedir, func(path string, info os.FileInfo, err error) error {
-		dirs = append(dirs, path)
+		dirs = append(dirs, MakeAbs(path))
 		return nil
 	})
 }
