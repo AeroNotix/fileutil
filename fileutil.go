@@ -51,6 +51,7 @@ func CopyFile(dst, src string) error {
 	if err != nil {
 		return err
 	}
+	defer source_file.Close()
 	source_stat, err := os.Stat(src)
 	if err != nil {
 		return err
