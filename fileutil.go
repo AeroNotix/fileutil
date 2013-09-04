@@ -24,8 +24,12 @@ func CopyDirectory(dst, src string) error {
 	}
 
 	for _, file := range subfiles {
-		source_file := filepath.Join(src, file.Name())
+		source_file, err := filepath.EvalSymlinks(filepath.Join(src, file.Name()))
+		if err != nil {
+			continue
+		}
 		destination_file := filepath.Join(dst, file.Name())
+
 		if file.IsDir() {
 			err = CopyDirectory(destination_file, source_file)
 			if err != nil {
