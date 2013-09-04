@@ -24,17 +24,33 @@ func CopyDirectory(dst, src string) error {
 		return err
 	}
 
-	for _, file := range subfiles {
-		source_file, err := filepath.EvalSymlinks(filepath.Join(src, file.Name()))
+	for _, origfile := range subfiles {
+		source_file, err := filepath.EvalSymlinks(filepath.Join(src, origfile.Name()))
 		if err != nil {
-			continue
+			return err
+		}
+		file, err := os.Stat(source_file)
+		if err != nil {
+			log.Println(err)
+			return err
 		}
 		destination_file := filepath.Join(dst, file.Name())
-
+		if issym, err := IsSymLink(filepath.Join(src, origfile.Name())); issym && err == nil {
+			linkname, err := os.Readlink(filepath.Join(src, origfile.Name()))
+			if err != nil {
+				return err
+			}
+			err = os.Symlink(linkname, filepath.Join(dst, origfile.Name()))
+			if err != nil {
+				log.Println(err)
+			}
+			continue
+		}
 		if file.IsDir() {
 			err = CopyDirectory(destination_file, source_file)
 			if err != nil {
-				return err
+				log.Println(err)
+				continue
 			}
 		} else {
 			err = CopyFile(destination_file, source_file)
@@ -64,4 +80,12 @@ func CopyFile(dst, src string) error {
 	defer destination_file.Close()
 	_, err = io.Copy(destination_file, source_file)
 	return err
+}
+
+func IsSymLink(fpath string) (bool, error) {
+	fi, err := os.Lstat(fpath)
+	if err != nil {
+		return false, err
+	}
+	return fi.Mode()&os.ModeSymlink == os.ModeSymlink, nil
 }
