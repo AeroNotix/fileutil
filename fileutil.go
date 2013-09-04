@@ -141,3 +141,54 @@ func MakeAbs(fpath string) string {
 	}
 	return fpath
 }
+
+func makeSetFromStrSlice(strslice []string) map[string]struct{} {
+	m := make(map[string]struct{}, len(strslice))
+	for _, str := range strslice {
+		m[str] = struct{}{}
+	}
+	return m
+}
+
+func RootPath(path string) string {
+	paths := strings.Split(path, string(filepath.Separator))
+	return paths[0]
+}
+
+func DiffDirectories(dir_a, dir_b string) (plus, minus []string, err error) {
+	list_a, err := RecursiveDirectoryList(dir_a)
+	if err != nil {
+		return nil, nil, err
+	}
+	list_b, err := RecursiveDirectoryList(dir_b)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// the first element is the pathname itself, so we can ignore
+	// that.
+	set_a := makeSetFromStrSlice(list_a[1:])
+	set_b := makeSetFromStrSlice(list_b[1:])
+
+	// We need to get the absolute path of the directory so we can
+	// swap the other directory's leading path section with ours
+	// so the directory listing will match properly.
+	full_path_a := MakeAbs(dir_a)
+	full_path_b := MakeAbs(dir_b)
+
+	for path, _ := range set_a {
+		rel_path := filepath.Join(full_path_b, path[len(full_path_a):])
+		if _, ok := set_b[rel_path]; !ok {
+			plus = append(plus, rel_path)
+		}
+	}
+
+	for path, _ := range set_b {
+		rel_path := filepath.Join(full_path_a, path[len(full_path_b):])
+		if _, ok := set_a[rel_path]; !ok {
+			minus = append(minus, rel_path)
+		}
+	}
+
+	return
+}
