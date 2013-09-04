@@ -25,7 +25,13 @@ func TestCopyDirs(t *testing.T) {
 		}
 		temp_file.Close()
 	}
+	CopyDirectory("destination_test", orig_dir)
+	if plus, minus, err := DiffDirectories("destination_test", orig_dir); false ||
+		err != nil || plus != nil || minus != nil {
+		fmt.Println(len(plus), len(minus))
+		t.Error("Directories do not match!", plus, minus)
 	}
 	DeleteDirectory("destination_test")
 	DeleteDirectory(orig_dir)
+
 }
