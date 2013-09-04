@@ -87,6 +87,20 @@ func CopyDirectory(dst, src string) error {
 	return nil
 }
 
+func DeleteDirectory(base string) error {
+	destination_list, err := RecursiveDirectoryList(base)
+	if err != nil {
+		return err
+	}
+	for x := len(destination_list) - 1; x != -1; x-- {
+		err = os.Remove(destination_list[x])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // CopyFile takes two pathnames and copies src into dst.
 func CopyFile(dst, src string) error {
 	source_file, err := os.Open(src)
