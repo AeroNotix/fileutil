@@ -12,13 +12,9 @@ func TestCopyDirs(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	dirpaths := make([]string, 11)
 	temp_dir, err := ioutil.TempDir(dir, "testing")
 	orig_dir := temp_dir
-	dirpaths = append(dirpaths, temp_dir)
-
-	filepaths := make([]string, 10)
-	for x := 0; x < 10; x++ {
+	for x := 0; x < 3; x++ {
 		temp_dir, err = ioutil.TempDir(temp_dir, "testing_dest")
 		if err != nil {
 			t.Error(err.Error())
@@ -27,14 +23,9 @@ func TestCopyDirs(t *testing.T) {
 		if err != nil {
 			t.Error(err.Error())
 		}
-		dirpaths = append(dirpaths, temp_dir)
-		filepaths = append(filepaths, temp_file.Name())
+		temp_file.Close()
 	}
-	CopyDirectory(orig_dir, "destination_test")
-	for _, path := range filepaths {
-		err = os.Remove(path)
-		if err != nil {
-			t.Error(err.Error())
-		}
 	}
+	DeleteDirectory("destination_test")
+	DeleteDirectory(orig_dir)
 }
