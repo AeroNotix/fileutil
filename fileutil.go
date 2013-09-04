@@ -3,6 +3,7 @@ package fileutil
 import (
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
