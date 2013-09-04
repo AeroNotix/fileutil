@@ -1,7 +1,6 @@
 package fileutil
 
 import (
-	"errors"
 	"io"
 	"io/ioutil"
 	"os"
@@ -12,11 +11,6 @@ func CopyDirectory(dst, src string) error {
 	fi, err := os.Stat(src)
 	if err != nil {
 		return err
-	}
-
-	_, err = os.Open(dst)
-	if !os.IsNotExist(err) {
-		return errors.New("Destination directory already exists.")
 	}
 
 	err = os.MkdirAll(dst, fi.Mode())
