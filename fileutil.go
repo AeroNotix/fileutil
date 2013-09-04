@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func CopyDirectory(src, dst string) error {
+func CopyDirectory(dst, src string) error {
 	fi, err := os.Stat(src)
 	if err != nil {
 		return err
@@ -33,12 +33,12 @@ func CopyDirectory(src, dst string) error {
 		source_file := filepath.Join(src, file.Name())
 		destination_file := filepath.Join(dst, file.Name())
 		if file.IsDir() {
-			err = CopyDirectory(source_file, destination_file)
+			err = CopyDirectory(destination_file, source_file)
 			if err != nil {
 				return err
 			}
 		} else {
-			err = CopyFile(source_file, destination_file)
+			err = CopyFile(destination_file, source_file)
 			if err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func CopyDirectory(src, dst string) error {
 	return nil
 }
 
-func CopyFile(src, dst string) error {
+func CopyFile(dst, src string) error {
 	source_file, err := os.Open(src)
 	if err != nil {
 		return err
@@ -56,10 +56,11 @@ func CopyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	destination_file, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY, source_stat.Mode())
+	destination_file, err := os.OpenFile(dst, os.O_CREATE|os.O_RDWR, source_stat.Mode())
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(source_file, destination_file)
+	defer destination_file.Close()
+	_, err = io.Copy(destination_file, source_file)
 	return err
 }
