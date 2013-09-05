@@ -9,7 +9,7 @@ Provides:
 
    // Will fully copy all the files underneath the src/ directory into
    // the dst/ directory.
-   fileutil.CopyDirectory(/path/to/destination/", "/path/to/directory/")
+   fileutil.CopyDirectory("/path/to/destination/", "/path/to/directory/")
    ok, err := fileutil.IsSymLink("/path/to/possible/symlink/")
    if err != nil {
        log.Fatal(err)
